@@ -47,26 +47,112 @@ user = FoldingAtHomeClient::User.new(id: id, name: name)
 # Fetch a user's stats, including teams
 # Required: name or id
 # Optional: passkey, team_id
-user.lookup
-user.lookup(passkey: passkey)
-user.lookup(team_id: team_id)
-user.lookup(passkey: passkey, team_id: team_id)
+user = user.lookup
+user = user.lookup(passkey: passkey)
+user = user.lookup(team_id: team_id)
+user = user.lookup(passkey: passkey, team_id: team_id)
 
 # Fetch a user's list of contributed projects
 # Required: name or id
 # Optional: passkey
-user.teams
-user.teams(passkey: passkey)
+teams = user.teams
+teams = user.teams(passkey: passkey)
 
 # Fetch a user's list of contributed projects
 # Required: name
-user.projects
+projects = user.projects
 
 # Fetch a user's bonus stats
 # Required: name
 # Optional: passkey
-user.bonuses
-user.bonuses(passkey: passkey)
+bonuses = user.bonuses
+bonuses = user.bonuses(passkey: passkey)
+```
+
+### Projects
+
+```ruby
+# Fetch all projects
+FoldingAtHomeClient::Projects.all
+```
+
+### Project
+
+```ruby
+id = 2968
+
+project = FoldingAtHomeClient::Project.new(id: id)
+
+# Fetch a project
+# Required: id
+project = project.lookup
+
+# Fetch a project's contributors
+# Required: id
+contributors = project.contributors
+
+# Fetch a project's description
+# Required: description_id
+description = project.description
+```
+
+### Descriptions
+
+```ruby
+# Fetch all descriptions
+descriptions = FoldingAtHomeClient::Descriptions.all
+```
+
+### Description
+
+```ruby
+id = 195
+
+# Fetch a description
+# Required: id
+description = FoldingAtHomeClient::Description.new(id: id).lookup
+```
+
+### Managers
+
+```ruby
+# Fetch all managers
+managers = FoldingAtHomeClient::Managers.all
+```
+
+### Manager
+
+```ruby
+id = 326
+
+# Fetch a manager
+# Required: id
+manager = FoldingAtHomeClient::Manager.new(id: id).lookup
+```
+
+### Causes
+
+```ruby
+# Fetch all causes
+causes = FoldingAtHomeClient::Causes.all
+```
+
+### GPUs
+
+```ruby
+# Fetch all GPUs
+gpus = FoldingAtHomeClient::GPUs.all
+```
+
+### GPU
+
+```ruby
+vendor = 4318
+device = 5
+
+# Fetch a GPUs
+# Required: device, vendor
+gpu = FoldingAtHomeClient::GPU.lookup(vendor: vendor, device: device)
 ```
 
 ### Notes

@@ -2,15 +2,15 @@
 
 module FoldingAtHomeClient
   module Users
-    extend self
+    extend Request
 
-    def count
+    def self.count
       endpoint = "/user-count"
 
       request(endpoint: endpoint).first
     end
 
-    def top(month: nil, year: nil)
+    def self.top(month: nil, year: nil)
       endpoint = "/user"
       params = {}
 
@@ -22,15 +22,11 @@ module FoldingAtHomeClient
         }
       end
 
-      request(endpoint: endpoint, params: params).map do |user_data|
-        User.new(**user_data)
-      end
-    end
-
-    private
-
-    def request(endpoint:, params: {})
-      Request.new(endpoint: endpoint, params: params).body
+      request_and_instantiate_objects(
+        endpoint: endpoint,
+        params: params,
+        object_class: User,
+      )
     end
   end
 end

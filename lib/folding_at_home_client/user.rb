@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module FoldingAtHomeClient
   class User
+    include Request
+
     attr_reader :id,
       :name,
       :wus,
@@ -38,23 +42,41 @@ module FoldingAtHomeClient
       @rank = rank if rank
       @score = score if score
 
-      teams = teams&.map do |team_data|
-        Team.new(**team_data) unless team_data[:score].zero?
+      teams = teams&.map do |team_hash|
+        Team.new(**team_hash) unless team_hash[:score].zero?
       end&.compact
 
       @teams = teams if teams
     end
 
     def lookup(passkey: nil, team_id: nil)
+      endpoint = user_endpoint
+
       params = {}
       params[:passkey] = passkey if passkey
       params[:team] = team_id if team_id
 
-      endpoint = user_endpoint
-      user_hash = request(endpoint: endpoint, params: params).first
+      user_hash = nil
 
-      if user_hash[:error]
-        @error = user_hash[:error]
+      begin
+        user_hash = request(endpoint: endpoint, params: params).first
+      rescue JSON::ParserError
+        if @name
+          query_endpoint = "/search/user"
+          query_params = {
+            query: @name,
+          }
+
+          query_user_hash = request(endpoint: query_endpoint, params: query_params).first
+          @id = query_user_hash&.fetch(:id, nil)
+          user_hash = request(endpoint: user_endpoint, params: params).first if @id
+        end
+      end
+
+      error = user_hash[:error]
+
+      if error
+        @error = error
         return self
       end
 
@@ -68,8 +90,8 @@ module FoldingAtHomeClient
       @rank = user_hash[:rank]
       @score = user_hash[:score]
 
-      teams = user_hash[:teams]&.map do |team_data|
-        Team.new(**team_data) unless team_data[:score].zero?
+      teams = user_hash[:teams]&.map do |team_hash|
+        Team.new(**team_hash) unless team_hash[:score].zero?
       end&.compact
 
       @teams = teams if teams
@@ -84,9 +106,17 @@ module FoldingAtHomeClient
       params = {}
       params[:passkey] = passkey if passkey
 
-      request(endpoint: endpoint, params: params).map do |team_data|
-        Team.new(**team_data) unless team_data[:score].zero?
-      end.compact
+      teams = request_and_instantiate_objects(
+        endpoint: endpoint,
+        params: params,
+        object_class: Team,
+      )
+
+      # request(endpoint: endpoint, params: params).map do |team_hash|
+      #   Team.new(**team_hash) unless team_hash[:score].zero?
+      # end.compact
+
+      teams
     end
 
     def projects
@@ -110,15 +140,11 @@ module FoldingAtHomeClient
 
     private
 
-    def request(endpoint:, params: {})
-      Request.new(endpoint: endpoint, params: params).body
-    end
-
     def user_endpoint(name_required = false)
-      if @id && !@id.empty? && !name_required
+      if @id && !@id.to_s.empty? && !name_required
         "/uid/#{@id}"
       elsif @name && !@name.empty?
-        "/user/#{@name}"
+        "/user/#{CGI.escape(@name)}"
       elsif name_required
         raise ArgumentError, "Required: name of user"
       else
