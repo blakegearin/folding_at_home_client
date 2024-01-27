@@ -24,6 +24,7 @@ module FoldingAtHomeClient
       @type = type if type
       @species = species if species
       @description = description if description
+
       @error = error if error
     end
 

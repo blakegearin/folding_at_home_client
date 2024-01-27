@@ -5,7 +5,9 @@ require "cgi"
 module FoldingAtHomeClient
   class User
     include Request
+    extend Request
 
+    attr_writer :id, :name
     attr_reader :id,
       :name,
       :wus,
@@ -42,15 +44,24 @@ module FoldingAtHomeClient
       @rank = rank if rank
       @score = score if score
 
-      teams = teams&.map do |team_hash|
-        Team.new(**team_hash) unless team_hash[:score].zero?
+      teams = teams&.map do |team|
+        if team.is_a?(Hash)
+          Team.new(**team) unless team[:score].zero?
+        else
+          team
+        end
       end&.compact
 
       @teams = teams if teams
     end
 
-    def lookup(passkey: nil, team_id: nil)
-      endpoint = user_endpoint
+    def self.lookup(id: nil, name: nil, passkey: nil, team_id: nil)
+      user = self.allocate
+
+      user.id ||= id if id
+      user.name ||= name if name
+
+      endpoint = user_endpoint(id: user.id, name: user.name)
 
       params = {}
       params[:passkey] = passkey if passkey
@@ -94,9 +105,11 @@ module FoldingAtHomeClient
         Team.new(**team_hash) unless team_hash[:score].zero?
       end&.compact
 
-      @teams = teams if teams
+      user_hash[:teams] = teams if teams
 
-      self
+      user.send(:initialize, **user_hash)
+
+      user
     end
 
     def teams(passkey: nil)
@@ -111,10 +124,6 @@ module FoldingAtHomeClient
         params: params,
         object_class: Team,
       )
-
-      # request(endpoint: endpoint, params: params).map do |team_hash|
-      #   Team.new(**team_hash) unless team_hash[:score].zero?
-      # end.compact
 
       teams
     end
@@ -151,5 +160,18 @@ module FoldingAtHomeClient
         raise ArgumentError, "Required: id or name of user"
       end
     end
+
+    def self.user_endpoint(id: nil, name: nil)
+      if id && !id.to_s.empty?
+        "/uid/#{id}"
+      elsif name && !name.empty?
+        "/user/#{CGI.escape(name)}"
+      elsif name_required
+        raise ArgumentError, "Required: name of user"
+      else
+        raise ArgumentError, "Required: id or name of user"
+      end
+    end
+
   end
 end

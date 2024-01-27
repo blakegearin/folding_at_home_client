@@ -45,15 +45,17 @@ user = FoldingAtHomeClient::User.new(name: name)
 user = FoldingAtHomeClient::User.new(id: id, name: name)
 
 # Fetch a user's stats, including teams
-# Required: name or id
+# Required: id or name
 # Optional: passkey, team_id
-user = user.lookup
-user = user.lookup(passkey: passkey)
-user = user.lookup(team_id: team_id)
-user = user.lookup(passkey: passkey, team_id: team_id)
+user = user.lookup(id: id)
+user = user.lookup(name: name)
+user = user.lookup(id: id, name: name)
+user = user.lookup(id: id, passkey: passkey)
+user = user.lookup(id: id, team_id: team_id)
+user = user.lookup(id: id, passkey: passkey, team_id: team_id)
 
 # Fetch a user's list of contributed projects
-# Required: name or id
+# Required: id or name
 # Optional: passkey
 teams = user.teams
 teams = user.teams(passkey: passkey)
@@ -67,6 +69,30 @@ projects = user.projects
 # Optional: passkey
 bonuses = user.bonuses
 bonuses = user.bonuses(passkey: passkey)
+```
+
+### Teams
+
+```ruby
+# Fetch count of teams
+FoldingAtHomeClient::Teams.count
+
+# Fetch top teams from a specific month
+FoldingAtHomeClient::Teams.top(month: 1, year: 2018)
+```
+
+### Team
+
+```ruby
+id = 1
+
+# Fetch a team
+# Required: id or name
+team = FoldingAtHomeClient::Team.lookup(id: id)
+
+# Fetch a teams's members
+# Required: id
+members = FoldingAtHomeClient::Team.new(id: id).members
 ```
 
 ### Projects
