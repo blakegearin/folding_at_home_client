@@ -37,7 +37,7 @@ module FoldingAtHomeClient
       active_50: nil,
       error: nil
     )
-      @id = id || team if id || team
+      @id = id || team.to_i if id || team
       @name = name if name
 
       @rank = trank if trank

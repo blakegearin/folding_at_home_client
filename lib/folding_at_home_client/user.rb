@@ -11,6 +11,7 @@ module FoldingAtHomeClient
     attr_reader :id,
       :name,
       :wus,
+      :wus_daily,
       :active_7,
       :active_50,
       :credit,
@@ -23,6 +24,7 @@ module FoldingAtHomeClient
     def initialize(
       id: nil,
       name: nil,
+      wu: nil,
       wus: nil,
       active_7: nil,
       active_50: nil,
@@ -30,29 +32,89 @@ module FoldingAtHomeClient
       last: nil,
       rank: nil,
       score: nil,
+      team: nil,
       teams: nil,
       users: nil
     )
       @id = id if id
       @name = name if name
 
-      @wus = wus if wus
+      wus = wu.to_i if wus.nil?
+      @wus = wus.to_i if wus
+
       @active_7 = active_7 if active_7
       @active_50 = active_50 if active_50
       @credit = credit if credit
       @last = last if last
       @rank = rank if rank
-      @score = score if score
+      @score = score.to_i if score
+
+      teams = [team] if teams.nil? && team
 
       teams = teams&.map do |team|
         if team.is_a?(Hash)
           Team.new(**team) unless team[:score].zero?
+        elsif team.is_a?(String)
+          Team.new(id: team.to_i)
         else
           team
         end
       end&.compact
 
       @teams = teams if teams
+    end
+
+    def lookup(passkey: nil, team_id: nil)
+      endpoint = user_endpoint(id: @id, name: @name)
+
+      params = {}
+      params[:passkey] = passkey if passkey
+      params[:team] = team_id if team_id
+
+      user_hash = nil
+
+      begin
+        user_hash = request(endpoint: endpoint, params: params).first
+      rescue JSON::ParserError
+        if @name
+          query_endpoint = "/search/user"
+          query_params = {
+            query: @name,
+          }
+
+          query_user_hash = request(endpoint: query_endpoint, params: query_params).first
+          @id = query_user_hash&.fetch(:id, nil)
+          user_hash = request(endpoint: user_endpoint, params: params).first if @id
+        end
+      end
+
+      error = user_hash[:error]
+
+      if error
+        @error = error
+        return self
+      end
+
+      @id = user_hash[:id]
+      @name= user_hash[:name]
+
+      @wus_daily = @wus if user_hash[:wus] && !@wus.nil?
+      @wus = user_hash[:wus]
+
+      @active_7 = user_hash[:active_7]
+      @active_50 = user_hash[:active_50]
+      @credit = user_hash[:credit] if user_hash[:credit]
+      @last = user_hash[:last]
+      @rank = user_hash[:rank]
+      @score = user_hash[:score]
+
+      teams = user_hash[:teams]&.map do |team_hash|
+        Team.new(**team_hash) unless team_hash[:score].zero?
+      end&.compact
+
+      @teams = teams if teams
+
+      self
     end
 
     def self.lookup(id: nil, name: nil, passkey: nil, team_id: nil)
