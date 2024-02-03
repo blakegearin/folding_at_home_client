@@ -54,9 +54,7 @@ module FoldingAtHomeClient
 
     def contributors
       endpoint = "/project/contributors"
-      params = {
-        projects: @id,
-      }
+      params = { projects: @id }
 
       request(endpoint: endpoint, params: params).map do |name|
         User.new(name: name)

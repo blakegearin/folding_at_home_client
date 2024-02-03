@@ -34,13 +34,14 @@ module FoldingAtHomeClient
       score: nil,
       team: nil,
       teams: nil,
-      users: nil
+      users: nil,
+      error: nil
     )
       @id = id if id
       @name = name if name
 
-      wus = wu.to_i if wus.nil?
-      @wus = wus.to_i if wus
+      wus = wu&.to_i if wus.nil?
+      @wus = wus&.to_i if wus
 
       @active_7 = active_7 if active_7
       @active_50 = active_50 if active_50
@@ -62,6 +63,8 @@ module FoldingAtHomeClient
       end&.compact
 
       @teams = teams if teams
+
+      @error = error if error
     end
 
     def lookup(passkey: nil, team_id: nil)
@@ -78,9 +81,7 @@ module FoldingAtHomeClient
       rescue JSON::ParserError
         if @name
           query_endpoint = "/search/user"
-          query_params = {
-            query: @name,
-          }
+          query_params = { query: @name }
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
           @id = query_user_hash&.fetch(:id, nil)
@@ -134,11 +135,9 @@ module FoldingAtHomeClient
       begin
         user_hash = request(endpoint: endpoint, params: params).first
       rescue JSON::ParserError
-        if @name
+        if user.name
           query_endpoint = "/search/user"
-          query_params = {
-            query: @name,
-          }
+          query_params = { query: user.name }
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
           @id = query_user_hash&.fetch(:id, nil)
@@ -149,8 +148,10 @@ module FoldingAtHomeClient
       error = user_hash[:error]
 
       if error
-        @error = error
-        return self
+        user_hash.delete(:status)
+
+        user.send(:initialize, **user_hash)
+        return user
       end
 
       @id = user_hash[:id]
@@ -234,6 +235,5 @@ module FoldingAtHomeClient
         raise ArgumentError, "Required: id or name of user"
       end
     end
-
   end
 end

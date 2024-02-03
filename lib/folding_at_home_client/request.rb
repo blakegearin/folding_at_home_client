@@ -25,8 +25,8 @@ module FoldingAtHomeClient
       "Accept" => "application/json",
     }
 
-    def connection
-      Faraday.new(url: API_URL) do |faraday|
+    def connection(base_url: API_URL)
+      Faraday.new(url: base_url) do |faraday|
         faraday.request :url_encoded
         faraday.adapter Faraday.default_adapter
 
@@ -39,17 +39,21 @@ module FoldingAtHomeClient
       parsed_response.is_a?(Array) ? parsed_response : [parsed_response]
     end
 
-    def request_unencoded(endpoint_and_params:)
-      response = connection.get(endpoint_and_params)
+    def request_unencoded(base_url: API_URL, format_response: true, endpoint_and_params:)
+      response = connection(base_url: base_url).get(endpoint_and_params)
 
-      format_response(response)
+      return format_response(response) if format_response
+
+      response
     end
 
-    def request(endpoint:, params: {})
-      url = API_URL + endpoint
-      response = Faraday.get(url, params, HEADERS)
+    def request(base_url: API_URL, format_response: true, endpoint:, params: {})
+      full_url = base_url + endpoint
+      response = Faraday.get(full_url, params, HEADERS)
 
-      format_response(response)
+      return format_response(response) if format_response
+
+      response
     end
 
     def request_and_instantiate_objects(endpoint:, params: {}, object_class:)

@@ -29,15 +29,26 @@ FoldingAtHomeClient::Users.top
 
 # Fetch top users from a specific month
 FoldingAtHomeClient::Users.top(month: 1, year: 2018)
+
+# Fetch daily users (unique based on name and team_id, not user id)
+# Caches the TXT file and limits fetching to every 3 hours
+FoldingAtHomeClient::Users.daily
+FoldingAtHomeClient::Users.daily(sort_by: :name, order: :desc)
+FoldingAtHomeClient::Users.daily(limit: 5)
+FoldingAtHomeClient::Users.daily(page: 1, per_page: 5)
+FoldingAtHomeClient::Users.daily(name: "Anonymous")
+FoldingAtHomeClient::Users.daily(team_id: 0)
+FoldingAtHomeClient::Users.daily(name: "Anonymous", team_id: 0)
+FoldingAtHomeClient::Users.daily(position: 10)
 ```
 
 ### User
 
 ```ruby
-id = "2"
+id = 2
 name = "name"
 passkey = "passkey"
-team_id = "0"
+team_id = 0
 
 # Create a user with an id, name, or both
 user = FoldingAtHomeClient::User.new(id: id)
