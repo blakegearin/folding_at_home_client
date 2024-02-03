@@ -18,6 +18,20 @@ gem install folding_at_home_client
 
 ## Usage
 
+- [Users](#users)
+- [User](#user)
+- [Teams](#teams)
+- [Team](#team)
+- [Projects](#projects)
+- [Project](#project)
+- [Descriptions](#descriptions)
+- [Description](#description)
+- [Managers](#managers)
+- [Manager](#manager)
+- [Causes](#causes)
+- [GPUs](#gpus)
+- [GPU](#gpu)
+
 ### Users
 
 ```ruby
