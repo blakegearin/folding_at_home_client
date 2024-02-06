@@ -5,9 +5,9 @@ module FoldingAtHomeClient
     extend Request
 
     def self.all
-      endpoint = "/gpus"
+      endpoint = '/gpus'
 
-      request_and_instantiate_objects(endpoint:, object_class: GPU)
+      request_and_instantiate_objects(endpoint: endpoint, object_class: GPU)
     end
   end
 end

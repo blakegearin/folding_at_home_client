@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-require_relative "lib/folding_at_home_client/version"
+require_relative 'lib/folding_at_home_client/version'
 
 Gem::Specification.new do |spec|
-  spec.name = "folding_at_home_client"
+  spec.name = 'folding_at_home_client'
   spec.version = FoldingAtHomeClient::VERSION
 
-  spec.authors = ["Blake Gearin"]
-  spec.email = "hello@blakeg.me"
+  spec.authors = ['Blake Gearin']
+  spec.email = 'hello@blakeg.me'
 
-  spec.summary = "Ruby client for Folding@Home"
-  spec.description = "Ruby client for Folding@Home"
-  spec.homepage = "https://github.com/blakegearin/folding_at_home_client"
-  spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.summary = 'Ruby client for Folding@Home'
+  spec.description = 'Ruby client for Folding@Home'
+  spec.homepage = 'https://github.com/blakegearin/folding_at_home_client'
+  spec.license = 'MIT'
+  spec.required_ruby_version = '>= 3.0.0'
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/blakegearin/folding_at_home_client"
+  spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['source_code_uri'] = 'https://github.com/blakegearin/folding_at_home_client'
 
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
   spec.files = Dir.chdir(__dir__) do
@@ -26,9 +26,10 @@ Gem::Specification.new do |spec|
     end
   end
 
-  spec.bindir = "exe"
+  spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
 
-  spec.add_dependency "faraday", "~> 2.9"
+  spec.add_dependency 'faraday', '~> 2.9'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

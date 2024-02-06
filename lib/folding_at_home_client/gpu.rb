@@ -38,7 +38,7 @@ module FoldingAtHomeClient
       error = gpu_hash[:error]
       gpu_hash.delete(:status) if error
 
-      new_gpu = self.allocate
+      new_gpu = allocate
       new_gpu.send(:initialize, **gpu_hash)
 
       new_gpu

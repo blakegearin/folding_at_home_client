@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
-require "cgi"
+require 'cgi'
 
 module FoldingAtHomeClient
   class User
     include Request
     extend Request
 
-    attr_writer :id, :name
-    attr_reader :id,
-      :name,
-      :wus,
+    attr_accessor :id, :name
+    attr_reader :work_units,
       :wus_daily,
-      :active_7,
-      :active_50,
+      :active7,
+      :active50,
       :credit,
       :last,
       :rank,
@@ -21,13 +19,14 @@ module FoldingAtHomeClient
       :teams,
       :error
 
+    # rubocop:disable Lint/UnusedMethodArgument
     def initialize(
       id: nil,
       name: nil,
-      wu: nil,
-      wus: nil,
-      active_7: nil,
-      active_50: nil,
+      work_unit: nil,
+      work_units: nil,
+      active7: nil,
+      active50: nil,
       credit: nil,
       last: nil,
       rank: nil,
@@ -40,11 +39,11 @@ module FoldingAtHomeClient
       @id = id if id
       @name = name if name
 
-      wus = wu&.to_i if wus.nil?
-      @wus = wus&.to_i if wus
+      work_units = work_unit&.to_i if work_units.nil?
+      @work_units = work_units&.to_i if work_units
 
-      @active_7 = active_7 if active_7
-      @active_50 = active_50 if active_50
+      @active7 = active7 if active7
+      @active50 = active50 if active50
       @credit = credit if credit
       @last = last if last
       @rank = rank if rank
@@ -52,13 +51,13 @@ module FoldingAtHomeClient
 
       teams = [team] if teams.nil? && team
 
-      teams = teams&.map do |team|
-        if team.is_a?(Hash)
-          Team.new(**team) unless team[:score].zero?
-        elsif team.is_a?(String)
-          Team.new(id: team.to_i)
+      teams = teams&.map do |team_thing|
+        if team_thing.is_a?(Hash)
+          Team.new(**team_thing) unless team_thing[:score].zero?
+        elsif team_thing.is_a?(String)
+          Team.new(id: team_thing.to_i)
         else
-          team
+          team_thing
         end
       end&.compact
 
@@ -66,6 +65,7 @@ module FoldingAtHomeClient
 
       @error = error if error
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     def lookup(passkey: nil, team_id: nil)
       endpoint = user_endpoint(id: @id, name: @name)
@@ -80,7 +80,7 @@ module FoldingAtHomeClient
         user_hash = request(endpoint: endpoint, params: params).first
       rescue JSON::ParserError
         if @name
-          query_endpoint = "/search/user"
+          query_endpoint = '/search/user'
           query_params = { query: @name }
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
@@ -97,13 +97,13 @@ module FoldingAtHomeClient
       end
 
       @id = user_hash[:id]
-      @name= user_hash[:name]
+      @name = user_hash[:name]
 
-      @wus_daily = @wus if user_hash[:wus] && !@wus.nil?
-      @wus = user_hash[:wus]
+      @work_units_daily = @work_units if user_hash[:wus] && !@work_units.nil?
+      @work_units = user_hash[:wus]
 
-      @active_7 = user_hash[:active_7]
-      @active_50 = user_hash[:active_50]
+      @active7 = user_hash[:active7]
+      @active50 = user_hash[:active50]
       @credit = user_hash[:credit] if user_hash[:credit]
       @last = user_hash[:last]
       @rank = user_hash[:rank]
@@ -119,7 +119,7 @@ module FoldingAtHomeClient
     end
 
     def self.lookup(id: nil, name: nil, passkey: nil, team_id: nil)
-      user = self.allocate
+      user = allocate
 
       user.id ||= id if id
       user.name ||= name if name
@@ -136,7 +136,7 @@ module FoldingAtHomeClient
         user_hash = request(endpoint: endpoint, params: params).first
       rescue JSON::ParserError
         if user.name
-          query_endpoint = "/search/user"
+          query_endpoint = '/search/user'
           query_params = { query: user.name }
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
@@ -155,10 +155,10 @@ module FoldingAtHomeClient
       end
 
       @id = user_hash[:id]
-      @name= user_hash[:name]
-      @wus = user_hash[:wus]
-      @active_7 = user_hash[:active_7]
-      @active_50 = user_hash[:active_50]
+      @name = user_hash[:name]
+      @work_units = user_hash[:wus]
+      @active7 = user_hash[:active7]
+      @active50 = user_hash[:active50]
       @credit = user_hash[:credit]
       @last = user_hash[:last]
       @rank = user_hash[:rank]
@@ -175,33 +175,31 @@ module FoldingAtHomeClient
       user
     end
 
-    def teams(passkey: nil)
+    def teams_lookup(passkey: nil)
       endpoint = user_endpoint(name_required: true)
-      endpoint += "/teams"
+      endpoint += '/teams'
 
       params = {}
       params[:passkey] = passkey if passkey
 
-      teams = request_and_instantiate_objects(
+      request_and_instantiate_objects(
         endpoint: endpoint,
         params: params,
-        object_class: Team,
+        object_class: Team
       )
-
-      teams
     end
 
     def projects
       endpoint = user_endpoint(name_required: true)
-      endpoint += "/projects"
+      endpoint += '/projects'
 
       request(endpoint: endpoint)
     end
 
     def bonuses(passkey: nil)
-      raise ArgumentError, "Required: name of user" unless @name
+      raise ArgumentError, 'Required: name of user' unless @name
 
-      endpoint = "/bonus"
+      endpoint = '/bonus'
       params = {
         user: @name
       }
@@ -210,29 +208,33 @@ module FoldingAtHomeClient
       request(endpoint: endpoint, params: params)
     end
 
+    class << self
+      private
+
+      def user_endpoint(id: nil, name: nil)
+        if id && !id.to_s.empty?
+          "/uid/#{id}"
+        elsif name && !name.empty?
+          "/user/#{CGI.escape(name)}"
+        elsif name_required
+          raise ArgumentError, 'Required: name of user'
+        else
+          raise ArgumentError, 'Required: id or name of user'
+        end
+      end
+    end
+
     private
 
-    def user_endpoint(name_required = false)
+    def user_endpoint(name_required: false)
       if @id && !@id.to_s.empty? && !name_required
         "/uid/#{@id}"
       elsif @name && !@name.empty?
         "/user/#{CGI.escape(@name)}"
       elsif name_required
-        raise ArgumentError, "Required: name of user"
+        raise ArgumentError, 'Required: name of user'
       else
-        raise ArgumentError, "Required: id or name of user"
-      end
-    end
-
-    def self.user_endpoint(id: nil, name: nil)
-      if id && !id.to_s.empty?
-        "/uid/#{id}"
-      elsif name && !name.empty?
-        "/user/#{CGI.escape(name)}"
-      elsif name_required
-        raise ArgumentError, "Required: name of user"
-      else
-        raise ArgumentError, "Required: id or name of user"
+        raise ArgumentError, 'Required: id or name of user'
       end
     end
   end

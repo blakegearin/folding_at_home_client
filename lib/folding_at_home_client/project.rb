@@ -44,7 +44,7 @@ module FoldingAtHomeClient
       @manager = Manager.new(
         name: project_hash[:manager],
         thumb: project_hash[:mthumb],
-        description: project_hash[:mdescription],
+        description: project_hash[:mdescription]
       )
       @cause = project_hash[:cause]
       @updated_at = project_hash[:modified]
@@ -53,7 +53,7 @@ module FoldingAtHomeClient
     end
 
     def contributors
-      endpoint = "/project/contributors"
+      endpoint = '/project/contributors'
       params = { projects: @id }
 
       request(endpoint: endpoint, params: params).map do |name|

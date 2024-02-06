@@ -12,18 +12,16 @@ class DoNotEncoder
   end
 
   def self.decode(params)
-    return Faraday::FlatParamsEncoder.decode(params)
+    Faraday::FlatParamsEncoder.decode(params)
   end
 end
 
 module FoldingAtHomeClient
   module Request
-    LOGGER = Logger.new(STDOUT)
-
-    API_URL = "https://api.foldingathome.org"
+    API_URL = 'https://api.foldingathome.org'.freeze
     HEADERS = {
-      "Accept" => "application/json",
-    }
+      'Accept' => 'application/json'
+    }.freeze
 
     def connection(base_url: API_URL)
       Faraday.new(url: base_url) do |faraday|
@@ -39,7 +37,7 @@ module FoldingAtHomeClient
       parsed_response.is_a?(Array) ? parsed_response : [parsed_response]
     end
 
-    def request_unencoded(base_url: API_URL, format_response: true, endpoint_and_params:)
+    def request_unencoded(endpoint_and_params:, base_url: API_URL, format_response: true)
       response = connection(base_url: base_url).get(endpoint_and_params)
 
       return format_response(response) if format_response
@@ -47,7 +45,7 @@ module FoldingAtHomeClient
       response
     end
 
-    def request(base_url: API_URL, format_response: true, endpoint:, params: {})
+    def request(endpoint:, base_url: API_URL, format_response: true, params: {})
       full_url = base_url + endpoint
       response = Faraday.get(full_url, params, HEADERS)
 
@@ -56,7 +54,7 @@ module FoldingAtHomeClient
       response
     end
 
-    def request_and_instantiate_objects(endpoint:, params: {}, object_class:)
+    def request_and_instantiate_objects(endpoint:, object_class:, params: {})
       request(endpoint: endpoint, params: params).map do |hash|
         object_class.new(**hash)
       end

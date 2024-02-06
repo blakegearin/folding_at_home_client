@@ -79,11 +79,12 @@ user = user.lookup(id: id, passkey: passkey)
 user = user.lookup(id: id, team_id: team_id)
 user = user.lookup(id: id, passkey: passkey, team_id: team_id)
 
-# Fetch a user's list of contributed projects
+# Fetch a user's list of teams
+# Note: Suffixed with "_lookup" since teams is a class attribute
 # Required: id or name
 # Optional: passkey
-teams = user.teams
-teams = user.teams(passkey: passkey)
+teams = user.teams_lookup
+teams = user.teams_lookup(passkey: passkey)
 
 # Fetch a user's list of contributed projects
 # Required: name

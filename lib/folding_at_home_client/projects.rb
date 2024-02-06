@@ -5,9 +5,9 @@ module FoldingAtHomeClient
     extend Request
 
     def self.all
-      endpoint = "/project"
+      endpoint = '/project'
 
-      request_and_instantiate_objects(endpoint:, object_class: Project)
+      request_and_instantiate_objects(endpoint: endpoint, object_class: Project)
     end
   end
 end

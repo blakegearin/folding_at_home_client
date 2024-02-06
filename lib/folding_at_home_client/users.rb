@@ -7,30 +7,30 @@ module FoldingAtHomeClient
   module Users
     extend Request
 
-    DAILY_FILE = "daily_user_summary.txt"
+    DAILY_FILE = 'daily_user_summary.txt'
 
     def self.count
-      endpoint = "/user-count"
+      endpoint = '/user-count'
 
       request(endpoint: endpoint).first
     end
 
     def self.top(month: nil, year: nil)
-      endpoint = "/user"
+      endpoint = '/user'
       params = {}
 
       if month && year
-        endpoint += "/monthly"
+        endpoint += '/monthly'
         params = {
           month: month,
-          year: year,
+          year: year
         }
       end
 
       request_and_instantiate_objects(
         endpoint: endpoint,
         params: params,
-        object_class: User,
+        object_class: User
       )
     end
 
@@ -107,12 +107,10 @@ module FoldingAtHomeClient
       users.sort_by! { |user| user.send(sort_by) } if sort_by
 
       order = params[:order] || false
-      users.reverse! if order && order.to_s.downcase == "desc"
+      users.reverse! if order && order.to_s.downcase == 'desc'
 
       users
     end
-
-    private
 
     def self.line_to_array(line)
       line.chomp.split("\t")

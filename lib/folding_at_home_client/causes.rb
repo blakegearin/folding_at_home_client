@@ -5,7 +5,7 @@ module FoldingAtHomeClient
     extend Request
 
     def self.all
-      endpoint = "/project/cause"
+      endpoint = '/project/cause'
 
       request(endpoint: endpoint)
     end

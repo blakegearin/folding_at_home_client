@@ -5,10 +5,8 @@ module FoldingAtHomeClient
     include Request
     extend Request
 
-    attr_writer :id, :name
-    attr_reader :id,
-      :name,
-      :rank,
+    attr_accessor :id, :name
+    attr_reader :rank,
       :score,
       :wus,
       :founder,
@@ -18,6 +16,7 @@ module FoldingAtHomeClient
       :user_wus,
       :error
 
+    # rubocop:disable Lint/UnusedMethodArgument
     def initialize(
       id: nil,
       team: nil,
@@ -54,21 +53,22 @@ module FoldingAtHomeClient
 
       @error = error if error
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     def self.lookup(id: nil, name: nil)
-      team = self.allocate
+      team = allocate
 
       team.id ||= id if id
       team.name ||= name if name
 
-      endpoint_and_params = "/team"
+      endpoint_and_params = '/team'
 
       if team.id && !team.id.to_s.empty?
         endpoint_and_params += "/#{team.id}"
       elsif team.name && !team.name.empty?
         endpoint_and_params += "/find?name=#{escape_param(team.name)}"
       else
-        raise ArgumentError, "Required: id or name of team"
+        raise ArgumentError, 'Required: id or name of team'
       end
 
       team_hash = nil
@@ -76,7 +76,7 @@ module FoldingAtHomeClient
       begin
         team_hash = request_unencoded(endpoint_and_params: endpoint_and_params).first
         raise StandardError if team_hash[:error]
-      rescue StandardError, JSON::ParserError
+      rescue StandardError
         if team.name
           query_endpoint_and_params = "/team?q=#{escape_param(team.name)}"
           query_team_hash = request_unencoded(endpoint_and_params: query_endpoint_and_params).first
@@ -102,19 +102,15 @@ module FoldingAtHomeClient
       members_array = request(endpoint: endpoint)
       keys = members_array.shift.map(&:to_sym)
 
-      members = members_array.map do |member_array|
+      members_array.map do |member_array|
         member_hash = Hash[keys.zip(member_array)]
 
         User.new(**member_hash)
       end
-
-      members
     end
 
-    private
-
     def self.escape_param(name)
-      name.gsub(" ", "%20").gsub("&", "%26").gsub(",", "%2C")
+      name.gsub(' ', '%20').gsub('&', '%26').gsub(',', '%2C')
     end
   end
 end
