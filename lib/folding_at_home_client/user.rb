@@ -118,7 +118,7 @@ module FoldingAtHomeClient
       self
     end
 
-    def self.lookup(id: nil, name: nil, passkey: nil, team_id: nil)
+    def self.find_by(id: nil, name: nil, passkey: nil, team_id: nil)
       user = allocate
 
       user.id ||= id if id

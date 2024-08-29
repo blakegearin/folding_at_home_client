@@ -1,14 +1,20 @@
+# Docs: https://docs.rubocop.org/rubocop/configuration
+
 AllCops:
   NewCops: enable
+  TargetRubyVersion: 3.1
 
 Layout/ArgumentAlignment:
-  EnforcedStyle: with_fixed_indentation
+  EnforcedStyle: 'with_fixed_indentation'
   Enabled: true
 
 Metrics/MethodLength:
   Enabled: false
 
 Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
   Enabled: false
 
 Metrics/ClassLength:
@@ -28,3 +34,6 @@ Style/Documentation:
 
 Style/HashConversion:
   Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: 'consistent_comma'

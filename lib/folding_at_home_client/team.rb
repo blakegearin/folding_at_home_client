@@ -55,7 +55,7 @@ module FoldingAtHomeClient
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
-    def self.lookup(id: nil, name: nil)
+    def self.find_by(id: nil, name: nil)
       team = allocate
 
       team.id ||= id if id

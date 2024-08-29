@@ -28,7 +28,7 @@ module FoldingAtHomeClient
       @error = error if error
     end
 
-    def self.lookup(vendor:, device:)
+    def self.find_by(vendor:, device:)
       endpoint = "/gpus/#{vendor}/#{device}"
       gpu_hash = request(endpoint: endpoint).first
 

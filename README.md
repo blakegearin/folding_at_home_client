@@ -72,12 +72,12 @@ user = FoldingAtHomeClient::User.new(id: id, name: name)
 # Fetch a user's stats, including teams
 # Required: id or name
 # Optional: passkey, team_id
-user = user.lookup(id: id)
-user = user.lookup(name: name)
-user = user.lookup(id: id, name: name)
-user = user.lookup(id: id, passkey: passkey)
-user = user.lookup(id: id, team_id: team_id)
-user = user.lookup(id: id, passkey: passkey, team_id: team_id)
+user = user.find_by(id: id)
+user = user.find_by(name: name)
+user = user.find_by(id: id, name: name)
+user = user.find_by(id: id, passkey: passkey)
+user = user.find_by(id: id, team_id: team_id)
+user = user.find_by(id: id, passkey: passkey, team_id: team_id)
 
 # Fetch a user's list of teams
 # Note: Suffixed with "_lookup" since teams is a class attribute
@@ -114,7 +114,7 @@ id = 1
 
 # Fetch a team
 # Required: id or name
-team = FoldingAtHomeClient::Team.lookup(id: id)
+team = FoldingAtHomeClient::Team.find_by(id: id)
 
 # Fetch a teams's members
 # Required: id
@@ -204,7 +204,7 @@ device = 5
 
 # Fetch a GPUs
 # Required: device, vendor
-gpu = FoldingAtHomeClient::GPU.lookup(vendor: vendor, device: device)
+gpu = FoldingAtHomeClient::GPU.find_by(vendor: vendor, device: device)
 ```
 
 ### Notes
