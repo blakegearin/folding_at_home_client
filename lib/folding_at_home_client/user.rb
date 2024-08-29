@@ -77,7 +77,7 @@ module FoldingAtHomeClient
       user_hash = nil
 
       begin
-        user_hash = request(endpoint: endpoint, params: params).first
+        user_hash = request(endpoint:, params:).first
       rescue JSON::ParserError
         if @name
           query_endpoint = '/search/user'
@@ -85,7 +85,7 @@ module FoldingAtHomeClient
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
           @id = query_user_hash&.fetch(:id, nil)
-          user_hash = request(endpoint: user_endpoint, params: params).first if @id
+          user_hash = request(endpoint: user_endpoint, params:).first if @id
         end
       end
 
@@ -133,7 +133,7 @@ module FoldingAtHomeClient
       user_hash = nil
 
       begin
-        user_hash = request(endpoint: endpoint, params: params).first
+        user_hash = request(endpoint:, params:).first
       rescue JSON::ParserError
         if user.name
           query_endpoint = '/search/user'
@@ -141,7 +141,7 @@ module FoldingAtHomeClient
 
           query_user_hash = request(endpoint: query_endpoint, params: query_params).first
           @id = query_user_hash&.fetch(:id, nil)
-          user_hash = request(endpoint: user_endpoint, params: params).first if @id
+          user_hash = request(endpoint: user_endpoint, params:).first if @id
         end
       end
 
@@ -183,8 +183,8 @@ module FoldingAtHomeClient
       params[:passkey] = passkey if passkey
 
       request_and_instantiate_objects(
-        endpoint: endpoint,
-        params: params,
+        endpoint:,
+        params:,
         object_class: Team
       )
     end
@@ -193,7 +193,7 @@ module FoldingAtHomeClient
       endpoint = user_endpoint(name_required: true)
       endpoint += '/projects'
 
-      request(endpoint: endpoint)
+      request(endpoint:)
     end
 
     def bonuses(passkey: nil)
@@ -201,11 +201,11 @@ module FoldingAtHomeClient
 
       endpoint = '/bonus'
       params = {
-        user: @name
+        user: @name,
       }
       params[:passkey] = passkey if passkey
 
-      request(endpoint: endpoint, params: params)
+      request(endpoint:, params:)
     end
 
     class << self

@@ -30,7 +30,7 @@ module FoldingAtHomeClient
 
     def self.find_by(vendor:, device:)
       endpoint = "/gpus/#{vendor}/#{device}"
-      gpu_hash = request(endpoint: endpoint).first
+      gpu_hash = request(endpoint:).first
 
       gpu_hash[:vendor] = vendor
       gpu_hash[:device] = device

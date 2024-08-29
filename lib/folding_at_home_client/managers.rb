@@ -7,7 +7,7 @@ module FoldingAtHomeClient
     def self.all
       endpoint = '/project/manager'
 
-      request_and_instantiate_objects(endpoint: endpoint, object_class: Manager)
+      request_and_instantiate_objects(endpoint:, object_class: Manager)
     end
   end
 end

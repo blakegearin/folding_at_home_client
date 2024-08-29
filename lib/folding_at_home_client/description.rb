@@ -27,7 +27,7 @@ module FoldingAtHomeClient
 
     def lookup
       endpoint = "/project/description/#{id}"
-      description_hash = request(endpoint: endpoint).first
+      description_hash = request(endpoint:).first
 
       error = description_hash[:error]
 

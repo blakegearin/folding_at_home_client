@@ -31,7 +31,7 @@ module FoldingAtHomeClient
 
     def lookup
       endpoint = "/project/manager/#{id}"
-      manager_hash = request(endpoint: endpoint).first
+      manager_hash = request(endpoint:).first
 
       error = manager_hash[:error]
 

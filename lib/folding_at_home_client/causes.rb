@@ -7,7 +7,7 @@ module FoldingAtHomeClient
     def self.all
       endpoint = '/project/cause'
 
-      request(endpoint: endpoint)
+      request(endpoint:)
     end
   end
 end

@@ -74,7 +74,7 @@ module FoldingAtHomeClient
       team_hash = nil
 
       begin
-        team_hash = request_unencoded(endpoint_and_params: endpoint_and_params).first
+        team_hash = request_unencoded(endpoint_and_params:).first
         raise StandardError if team_hash[:error]
       rescue StandardError
         if team.name
@@ -84,7 +84,7 @@ module FoldingAtHomeClient
           team.id = query_team_hash&.fetch(:id, nil)
           endpoint = "/#{team.id}"
 
-          team_hash = request(endpoint: endpoint).first if team.id
+          team_hash = request(endpoint:).first if team.id
         end
       end
 
@@ -99,7 +99,7 @@ module FoldingAtHomeClient
     def members
       endpoint = "/team/#{@id}/members"
 
-      members_array = request(endpoint: endpoint)
+      members_array = request(endpoint:)
       keys = members_array.shift.map(&:to_sym)
 
       members_array.map do |member_array|

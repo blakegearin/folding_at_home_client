@@ -12,7 +12,7 @@ module FoldingAtHomeClient
     def self.count
       endpoint = '/user-count'
 
-      request(endpoint: endpoint).first
+      request(endpoint:).first
     end
 
     def self.top(month: nil, year: nil)
@@ -22,14 +22,14 @@ module FoldingAtHomeClient
       if month && year
         endpoint += '/monthly'
         params = {
-          month: month,
-          year: year
+          month:,
+          year:,
         }
       end
 
       request_and_instantiate_objects(
-        endpoint: endpoint,
-        params: params,
+        endpoint:,
+        params:,
         object_class: User
       )
     end

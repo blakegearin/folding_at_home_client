@@ -20,7 +20,7 @@ module FoldingAtHomeClient
   module Request
     API_URL = 'https://api.foldingathome.org'.freeze
     HEADERS = {
-      'Accept' => 'application/json'
+      'Accept' => 'application/json',
     }.freeze
 
     def connection(base_url: API_URL)
@@ -38,7 +38,7 @@ module FoldingAtHomeClient
     end
 
     def request_unencoded(endpoint_and_params:, base_url: API_URL, format_response: true)
-      response = connection(base_url: base_url).get(endpoint_and_params)
+      response = connection(base_url:).get(endpoint_and_params)
 
       return format_response(response) if format_response
 
@@ -55,7 +55,7 @@ module FoldingAtHomeClient
     end
 
     def request_and_instantiate_objects(endpoint:, object_class:, params: {})
-      request(endpoint: endpoint, params: params).map do |hash|
+      request(endpoint:, params:).map do |hash|
         object_class.new(**hash)
       end
     end

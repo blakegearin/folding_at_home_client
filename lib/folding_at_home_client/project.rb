@@ -31,7 +31,7 @@ module FoldingAtHomeClient
 
     def lookup
       endpoint = "/project/#{@id}"
-      project_hash = request(endpoint: endpoint).first
+      project_hash = request(endpoint:).first
 
       error = project_hash[:error]
 
@@ -56,8 +56,8 @@ module FoldingAtHomeClient
       endpoint = '/project/contributors'
       params = { projects: @id }
 
-      request(endpoint: endpoint, params: params).map do |name|
-        User.new(name: name)
+      request(endpoint:, params:).map do |name|
+        User.new(name:)
       end
     end
 
