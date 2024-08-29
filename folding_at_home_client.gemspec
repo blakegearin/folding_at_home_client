@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/blakegearin/folding_at_home_client'
+  spec.metadata['github_repo'] = 'ssh://github.com/blakegearin/folding_at_home_client'
 
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
   spec.files = Dir.chdir(__dir__) do
