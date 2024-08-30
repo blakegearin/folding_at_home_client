@@ -2,6 +2,8 @@
 
 Ruby client for the [Folding@home API](https://api.foldingathome.org)
 
+Need more historical data? Try out [`extreme_overclocking_client`](https://github.com/blakegearin/folding_at_home_client)
+
 ## Getting Started
 
 Install and add to Gemfile:
