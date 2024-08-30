@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors = ['Blake Gearin']
   spec.email = 'hello@blakeg.me'
 
-  spec.summary = 'Ruby client for Folding@Home'
-  spec.description = 'Ruby client for Folding@Home'
+  spec.summary = 'Client for the Folding@Home API'
+  spec.description = 'Client for the Folding@Home API'
   spec.homepage = 'https://github.com/blakegearin/folding_at_home_client'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1.0'
