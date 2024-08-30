@@ -39,7 +39,7 @@ module FoldingAtHomeClient
       @id = id || team.to_i if id || team
       @name = name if name
 
-      @rank = trank if trank
+      @rank = trank || rank if trank || rank
 
       @score = tscore || credit if tscore || credit
       @wus = twus || wus if twus || wus

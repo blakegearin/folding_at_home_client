@@ -19,12 +19,13 @@ module FoldingAtHomeClient
       :teams,
       :error
 
-    # rubocop:disable Lint/UnusedMethodArgument
+    # rubocop:disable Lint/UnusedMethodArgument, Naming/MethodParameterName
     def initialize(
       id: nil,
       name: nil,
       work_unit: nil,
       work_units: nil,
+      wu: nil,
       active7: nil,
       active50: nil,
       credit: nil,
@@ -39,8 +40,7 @@ module FoldingAtHomeClient
       @id = id if id
       @name = name if name
 
-      work_units = work_unit&.to_i if work_units.nil?
-      @work_units = work_units&.to_i if work_units
+      @work_units = work_units&.to_i || wu&.to_i unless work_units.nil? && wu.nil?
 
       @active7 = active7 if active7
       @active50 = active50 if active50
@@ -53,7 +53,7 @@ module FoldingAtHomeClient
 
       teams = teams&.map do |team_thing|
         if team_thing.is_a?(Hash)
-          Team.new(**team_thing) unless team_thing[:score].zero?
+          Team.new(**team_thing) unless team_thing[:score]&.zero?
         elsif team_thing.is_a?(String)
           Team.new(id: team_thing.to_i)
         else
@@ -65,7 +65,7 @@ module FoldingAtHomeClient
 
       @error = error if error
     end
-    # rubocop:enable Lint/UnusedMethodArgument
+    # rubocop:enable Lint/UnusedMethodArgument, Naming/MethodParameterName
 
     def lookup(passkey: nil, team_id: nil)
       endpoint = user_endpoint(id: @id, name: @name)
@@ -110,7 +110,7 @@ module FoldingAtHomeClient
       @score = user_hash[:score]
 
       teams = user_hash[:teams]&.map do |team_hash|
-        Team.new(**team_hash) unless team_hash[:score].zero?
+        Team.new(**team_hash) unless team_hash[:score]&.zero?
       end&.compact
 
       @teams = teams if teams
@@ -165,7 +165,7 @@ module FoldingAtHomeClient
       @score = user_hash[:score]
 
       teams = user_hash[:teams]&.map do |team_hash|
-        Team.new(**team_hash) unless team_hash[:score].zero?
+        Team.new(**team_hash) unless team_hash[:score]&.zero?
       end&.compact
 
       user_hash[:teams] = teams if teams
@@ -226,11 +226,23 @@ module FoldingAtHomeClient
 
     private
 
-    def user_endpoint(name_required: false)
-      if @id && !@id.to_s.empty? && !name_required
-        "/uid/#{@id}"
-      elsif @name && !@name.empty?
-        "/user/#{CGI.escape(@name)}"
+    # def user_endpoint(name_required: false)
+    #   if @id && !@id.to_s.empty? && !name_required
+    #     "/uid/#{@id}"
+    #   elsif @name && !@name.empty?
+    #     "/user/#{CGI.escape(@name)}"
+    #   elsif name_required
+    #     raise ArgumentError, 'Required: name of user'
+    #   else
+    #     raise ArgumentError, 'Required: id or name of user'
+    #   end
+    # end
+
+    def user_endpoint(id: @id, name: @name, name_required: false)
+      if id && !id.to_s.empty? && !name_required
+        "/uid/#{id}"
+      elsif name && !name.empty?
+        "/user/#{CGI.escape(name)}"
       elsif name_required
         raise ArgumentError, 'Required: name of user'
       else

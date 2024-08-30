@@ -12,3 +12,5 @@
 
 *.gem
 *.txt
+
+.vscode/*

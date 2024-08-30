@@ -47,7 +47,8 @@ module FoldingAtHomeClient
     end
 
     def self.daily(params = {})
-      update_daily_file(filepath: params[:filepath] || DAILY_FILE)
+      filepath = params[:filepath] || DAILY_FILE
+      update_daily_file(filepath:)
 
       header_lines = 2
 
@@ -71,7 +72,7 @@ module FoldingAtHomeClient
       keys = []
       users = []
 
-      File.foreach(DAILY_FILE).each_with_index do |line, index|
+      File.foreach(filepath).each_with_index do |line, index|
         next if index.zero?
 
         line_array = line_to_array(line)
