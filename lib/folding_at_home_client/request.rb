@@ -56,17 +56,8 @@ module FoldingAtHomeClient
 
     def request_and_instantiate_objects(endpoint:, object_class:, params: {})
       request(endpoint:, params:).map do |hash|
-        # require 'pry'
-        # binding.pry
-        # puts 'end of pry'
         object_class.new(**hash)
       end
     end
-
-    # def request_and_instantiate_objects(endpoint:, object_class:, params: {})
-    #   request(endpoint:, params:).map do |hash|
-    #     object_class.new(*hash.values_at(*object_class.members))
-    #   end
-    # end
   end
 end
