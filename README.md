@@ -2,7 +2,7 @@
 
 Ruby client for the [Folding@home API](https://api.foldingathome.org)
 
-Need more historical data? Try out [`extreme_overclocking_client`](https://github.com/blakegearin/folding_at_home_client)
+Need more historical data? Try out [`extreme_overclocking_client`](https://github.com/blakegearin/extreme_overclocking_client)
 
 ## Getting Started
 
